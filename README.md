@@ -4,11 +4,11 @@ ICS26012 Operating Systems — Group 7, 3ITE. Java Swing application for CPU and
 
 ## Current status
 
-The workspace initially contained only Git metadata, with no commits or source files. There were no existing modules, shared interfaces, result classes, documentation, or entry points to reorganize or verify. The folders below are ready for incoming code; no scheduling behavior or runnable application has been implemented yet.
+Preemptive Priority Scheduling is available as a standalone Swing module. Its algorithm, helper classes, and interface remain together; the other algorithms and shared menu are pending. No shared interfaces or result classes exist yet.
 
 | Module | Owner | Destination / package | Status |
 | --- | --- | --- | --- |
-| Preemptive Priority Scheduling | Requesting group member; name pending | `src/scheduler/cpu/` / `scheduler.cpu` | Pending |
+| Preemptive Priority Scheduling | Hannah P. Muñoz | `src/scheduler/cpu/PriorityScheduling.java` / `scheduler.cpu` | Available; standalone Swing entry point |
 | Round Robin | Member assignment pending | `src/scheduler/cpu/` / `scheduler.cpu` | Pending |
 | Shortest Seek Time First (SSTF) | Member assignment pending | `src/scheduler/disk/` / `scheduler.disk` | Pending |
 | C-LOOK | Member assignment pending | `src/scheduler/disk/` / `scheduler.disk` | Pending |
@@ -46,7 +46,7 @@ if ($sources.Count -eq 0) {
 }
 ```
 
-This command currently reports that no modules are present. Compilation and entry-point verification remain pending until source code arrives.
+The current Priority Scheduling module compiles with JDK 23.0.2. It uses only standard Java libraries.
 
 After successful compilation, run a module using the fully qualified name of its class containing `public static void main(String[] args)`:
 
@@ -54,7 +54,15 @@ After successful compilation, run a module using the fully qualified name of its
 java -cp build/classes <package.ClassName>
 ```
 
-For example, if a teammate supplies `src/scheduler/cpu/RoundRobin.java` with `package scheduler.cpu;` and a `main` method, run `java -cp build/classes scheduler.cpu.RoundRobin`. This is an example, not an existing entry point. Document each actual entry point here when added. A shared Swing menu is still pending and has no run command yet.
+Run the existing Priority Scheduling screen after compiling:
+
+```powershell
+java -cp build/classes scheduler.cpu.PriorityScheduling
+```
+
+Click **Load Sample Data**, then **Run Simulation**, or enter your own processes. Smaller priority numbers run first. Equal priority does not preempt the running process; ready jobs are ordered by priority, arrival time, then PID. Result rows are displayed in ascending numeric PID order regardless of input order; Gantt intervals retain execution order. The public `PriorityScheduling` panel constructor is available for the future shared menu. Its standalone window currently exits the application when closed.
+
+A shared Swing menu is still pending and has no run command yet.
 
 ## Adding a teammate's module
 
