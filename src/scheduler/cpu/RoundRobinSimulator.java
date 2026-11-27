@@ -12,8 +12,8 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * Round Robin
- * Roz Alexi A. Tengco - Group 7
+- Round Robin
+- Roz Alexi A. Tengco - Group 7
  */
 public class RoundRobinSimulator extends JFrame {
 
@@ -21,18 +21,18 @@ public class RoundRobinSimulator extends JFrame {
 
     public static class Process {
         int pid;
-        int arrivalTime;
-        int burstTime;
+        long arrivalTime;
+        long burstTime;
 
-        int remainingTime;
-        int completionTime;
-        int turnaroundTime;
-        int waitingTime;
-        int responseTime;
-        int firstRunTime = -1;
+        long remainingTime;
+        long completionTime;
+        long turnaroundTime;
+        long waitingTime;
+        long responseTime;
+        long firstRunTime = -1;
         boolean hasArrived = false;
 
-        public Process(int pid, int arrivalTime, int burstTime) {
+        public Process(int pid, long arrivalTime, long burstTime) {
             this.pid = pid;
             this.arrivalTime = arrivalTime;
             this.burstTime = burstTime;
@@ -42,10 +42,10 @@ public class RoundRobinSimulator extends JFrame {
 
     public static class GanttRecord {
         int pid; // -1 indicates Idle time
-        int startTime;
-        int endTime;
+        long startTime;
+        long endTime;
 
-        public GanttRecord(int pid, int startTime, int endTime) {
+        public GanttRecord(int pid, long startTime, long endTime) {
             this.pid = pid;
             this.startTime = startTime;
             this.endTime = endTime;
@@ -69,12 +69,12 @@ public class RoundRobinSimulator extends JFrame {
 
     public static class RoundRobinScheduler {
 
-        public SchedulerResult schedule(List<Process> processes, int quantum) {
+        public SchedulerResult schedule(List<Process> processes, long quantum) {
             SchedulerResult result = new SchedulerResult();
             if (processes == null || processes.isEmpty() || quantum <= 0) return result;
 
             // Reset process states for a fresh run
-            int totalBurst = 0;
+            long totalBurst = 0;
             for (Process p : processes) {
                 totalBurst += p.burstTime;
                 p.remainingTime = p.burstTime;
@@ -85,19 +85,19 @@ public class RoundRobinSimulator extends JFrame {
             // Sort by Arrival Time initially; ties broken by PID
             processes.sort((p1, p2) -> {
                 if (p1.arrivalTime != p2.arrivalTime) {
-                    return Integer.compare(p1.arrivalTime, p2.arrivalTime);
+                    return Long.compare(p1.arrivalTime, p2.arrivalTime);
                 }
                 return Integer.compare(p1.pid, p2.pid);
             });
 
-            int currentTime = 0;
+            long currentTime = 0;
             int completedCount = 0;
             Queue<Process> readyQueue = new LinkedList<>();
 
             // Initial check for time 0
             checkArrivals(processes, readyQueue, currentTime);
 
-            int currentIdleStart = -1;
+            long currentIdleStart = -1;
 
             while (completedCount < processes.size()) {
                 if (readyQueue.isEmpty()) {
@@ -124,8 +124,8 @@ public class RoundRobinSimulator extends JFrame {
                 }
 
                 // Determine execution slice
-                int runTime = Math.min(quantum, currentProcess.remainingTime);
-                int startTime = currentTime;
+                long runTime = Math.min(quantum, currentProcess.remainingTime);
+                long startTime = currentTime;
 
                 currentTime += runTime;
                 currentProcess.remainingTime -= runTime;
@@ -159,7 +159,7 @@ public class RoundRobinSimulator extends JFrame {
                 totalResponse += p.responseTime;
             }
 
-            int totalTime = currentTime;
+            long totalTime = currentTime;
             result.avgWaiting = totalWait / processes.size();
             result.avgTurnaround = totalTurnaround / processes.size();
             result.avgResponse = totalResponse / processes.size();
@@ -173,7 +173,7 @@ public class RoundRobinSimulator extends JFrame {
         }
 
         // Helper method to handle arrivals
-        private void checkArrivals(List<Process> processes, Queue<Process> readyQueue, int currentTime) {
+        private void checkArrivals(List<Process> processes, Queue<Process> readyQueue, long currentTime) {
             for (Process p : processes) {
                 if (!p.hasArrived && p.arrivalTime <= currentTime) {
                     readyQueue.add(p);
@@ -244,10 +244,7 @@ public class RoundRobinSimulator extends JFrame {
         metricsLabel = new JLabel(" Averages and System Metrics will appear here.");
         metricsLabel.setFont(new Font("Arial", Font.BOLD, 13));
         metricsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JScrollPane metricsScroll = new JScrollPane(metricsLabel,
-            JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        metricsScroll.setBorder(BorderFactory.createEmptyBorder());
-        centerPanel.add(metricsScroll, BorderLayout.SOUTH);
+        centerPanel.add(metricsLabel, BorderLayout.SOUTH);
 
         // Bottom Panel: Gantt Chart
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -279,13 +276,14 @@ public class RoundRobinSimulator extends JFrame {
                 inputTable.getCellEditor().stopCellEditing();
             }
             inputTableModel.setRowCount(0);
-            quantumField.setText(String.valueOf(samples.DemoData.QUANTUM));
-            for (Object[] row : samples.DemoData.cpu(false)) inputTableModel.addRow(row);
-            outputTableModel.setRowCount(0);
-            ganttPanel.setChart(new ArrayList<>());
-            metricsLabel.setText(" Averages and System Metrics will appear here.");
+            quantumField.setText("3");
+            // Sample Data: PID, Arrival, Burst
+            inputTableModel.addRow(new Object[]{1, 0, 5});
+            inputTableModel.addRow(new Object[]{2, 1, 4});
+            inputTableModel.addRow(new Object[]{3, 3, 2});
+            inputTableModel.addRow(new Object[]{4, 4, 4});
+            inputTableModel.addRow(new Object[]{5, 6, 2});
         });
-        btnLoadSample.setToolTipText("Group demonstration dataset: 10 processes (not a facilitator problem set)");
 
         btnRun.addActionListener(e -> runSimulation());
     }
@@ -297,9 +295,9 @@ public class RoundRobinSimulator extends JFrame {
         }
 
         try {
-            int quantum = 0;
+            long quantum = 0;
             try {
-                quantum = Integer.parseInt(quantumField.getText().trim());
+                quantum = Long.parseLong(quantumField.getText().trim());
                 if (quantum <= 0) throw new NumberFormatException();
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid positive integer (> 0) for Time Quantum.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -328,8 +326,8 @@ public class RoundRobinSimulator extends JFrame {
                 }
 
                 int pid = Integer.parseInt(pidObj.toString().trim());
-                int arrival = Integer.parseInt(arrObj.toString().trim());
-                int burst = Integer.parseInt(burstObj.toString().trim());
+                long arrival = Long.parseLong(arrObj.toString().trim());
+                long burst = Long.parseLong(burstObj.toString().trim());
 
                 if (pid < 0 || arrival < 0) {
                     JOptionPane.showMessageDialog(this, "Row " + (i + 1) + ": PID and Arrival Time cannot be negative.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -403,7 +401,7 @@ public class RoundRobinSimulator extends JFrame {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int totalTime = chart.get(chart.size() - 1).endTime;
+            long totalTime = chart.get(chart.size() - 1).endTime;
             int panelWidth = getWidth() - 40;
             int height = 40;
             int y = 20;
@@ -438,7 +436,9 @@ public class RoundRobinSimulator extends JFrame {
             }
 
             // Draw Final Time Marker
-            g2.drawString(String.valueOf(totalTime), startX - 5, y + height + 15);
+            String finalLabel = String.valueOf(totalTime);
+            int finalLabelWidth = g2.getFontMetrics().stringWidth(finalLabel);
+            g2.drawString(finalLabel, Math.min(startX - (finalLabelWidth / 2), getWidth() - finalLabelWidth - 5), y + height + 15);
         }
     }
 
