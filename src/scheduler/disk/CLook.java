@@ -1,3 +1,5 @@
+package scheduler.disk;
+
 // C-LOOK Algorithm
 // Aileen Shein V. Banzuela - Group 7
 
@@ -319,10 +321,20 @@ public class CLook extends JFrame {
 
         JButton run = new JButton("Run");
         JButton clear = new JButton("Clear");
+        JButton sample = new JButton("Load Sample Data");
+        sample.setToolTipText("Group demonstration dataset: 20 requests (not a facilitator problem set)");
+        sample.addActionListener(e -> {
+            diskSizeField.setText(String.valueOf(samples.DemoData.DISK_SIZE));
+            headField.setText(String.valueOf(samples.DemoData.HEAD));
+            requestsField.setText(samples.DemoData.DISK_QUEUE);
+            upBtn.setSelected(true);
+            clearResults();
+        });
         JButton close = new JButton(hasMenu ? "Back to Menu" : "Close");
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btns.add(close);
         btns.add(clear);
+        btns.add(sample);
         btns.add(run);
         c.gridx = 0;
         c.gridy = 3;

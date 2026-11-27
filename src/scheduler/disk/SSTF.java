@@ -54,6 +54,11 @@ import javax.swing.table.DefaultTableModel;
 // =============================================================================
 public class SSTF {
 
+    /** Exposes the existing panel to the shared menu without exposing algorithm helpers. */
+    public static JPanel createPanel() {
+        return new SSTFPanel();
+    }
+
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -70,12 +75,14 @@ public class SSTF {
             UIManager.put(parts[i], font);
         }
 
-        JFrame window = new JFrame("SSTF Disk Scheduling Simulator");
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.add(new SSTFPanel());
-        window.setSize(1200, 720);
-        window.setLocationRelativeTo(null);   // center on the screen
-        window.setVisible(true);
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            JFrame window = new JFrame("SSTF Disk Scheduling Simulator");
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.add(new SSTFPanel());
+            window.setSize(1200, 720);
+            window.setLocationRelativeTo(null);   // center on the screen
+            window.setVisible(true);
+        });
     }
 }
 
@@ -206,16 +213,16 @@ class SSTFPanel extends JPanel implements ActionListener {
 
     // Sample problems for the "Load Sample Data" button.
     // Only the inputs are saved here; the answers are computed by the algorithm.
-    // TODO: add the facilitator's practice problem sets here.
+    // No facilitator problem sets were supplied; these are demonstration inputs.
     private String[] sampleNames = {
         "1 - Textbook example",
-        "2 - 20 requests",
+        "2 - Group demonstration (20 requests)",
         "3 - Tie (40 and 60)",
         "4 - Head at the end"
     };
     private String[] sampleQueues = {
         "98, 183, 37, 122, 14, 124, 65, 67",
-        "45, 130, 10, 199, 88, 110, 150, 60, 175, 25, 130, 95, 70, 140, 5, 160, 115, 0, 185, 90",
+        samples.DemoData.DISK_QUEUE,
         "60, 40, 90, 10",
         "0, 198, 100, 100, 150"
     };
@@ -459,6 +466,10 @@ class SSTFPanel extends JPanel implements ActionListener {
         }
 
         String[] parts = text.split("[,\\s]+");   // split by commas and/or spaces
+        if (parts.length == 0) {
+            showError("Request queue is empty. Enter at least one cylinder number.");
+            return null;
+        }
         if (parts.length > MAX_REQUESTS) {
             showError("Too many requests (" + parts.length + "). The maximum is " + MAX_REQUESTS + ".");
             return null;

@@ -244,7 +244,10 @@ public class RoundRobinSimulator extends JFrame {
         metricsLabel = new JLabel(" Averages and System Metrics will appear here.");
         metricsLabel.setFont(new Font("Arial", Font.BOLD, 13));
         metricsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        centerPanel.add(metricsLabel, BorderLayout.SOUTH);
+        JScrollPane metricsScroll = new JScrollPane(metricsLabel,
+            JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        metricsScroll.setBorder(BorderFactory.createEmptyBorder());
+        centerPanel.add(metricsScroll, BorderLayout.SOUTH);
 
         // Bottom Panel: Gantt Chart
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -276,14 +279,13 @@ public class RoundRobinSimulator extends JFrame {
                 inputTable.getCellEditor().stopCellEditing();
             }
             inputTableModel.setRowCount(0);
-            quantumField.setText("3");
-            // Sample Data: PID, Arrival, Burst
-            inputTableModel.addRow(new Object[]{1, 0, 5});
-            inputTableModel.addRow(new Object[]{2, 1, 4});
-            inputTableModel.addRow(new Object[]{3, 3, 2});
-            inputTableModel.addRow(new Object[]{4, 4, 4});
-            inputTableModel.addRow(new Object[]{5, 6, 2});
+            quantumField.setText(String.valueOf(samples.DemoData.QUANTUM));
+            for (Object[] row : samples.DemoData.cpu(false)) inputTableModel.addRow(row);
+            outputTableModel.setRowCount(0);
+            ganttPanel.setChart(new ArrayList<>());
+            metricsLabel.setText(" Averages and System Metrics will appear here.");
         });
+        btnLoadSample.setToolTipText("Group demonstration dataset: 10 processes (not a facilitator problem set)");
 
         btnRun.addActionListener(e -> runSimulation());
     }
