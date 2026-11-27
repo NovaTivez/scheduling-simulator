@@ -1,0 +1,6 @@
+# Baseline: main fdd99be; line endings normalized to LF.
+src/scheduler/cpu/RoundRobinSimulator.java	    // DATA MODELS & ALGORITHM LOGIC	    // GRAPHICAL USER INTERFACE (Swing)	c2a65ec1147da6c33239f5a949e30b161de29ef7cf1f3be2db0d2719e36adc61
+src/scheduler/cpu/PriorityScheduling.java	    static List<Slot> schedule	    private static String formatResults	7b88bf813afb839deb31267ad41b36ae8c86be329aa61e1af82a860907212371
+src/scheduler/cpu/PriorityScheduling.java	    static class Job	    private static class GanttChart	c6bdd1670db28bbb75fb3f1e79e4d7ce60853611db4f128040485514b818b3be
+src/scheduler/disk/SSTF.java	class SSTFScheduler	// SSTFPanel -	aa4966504935520f4910ccd321337bfaa020420e3603fac2967fa3b175b03e61
+src/scheduler/disk/CLook.java	interface DiskScheduler	class PathPanel	531e4eed03fc2fda9f62a18bccc189b23993f3e7d6791e49696ef1968dbfc8e8
