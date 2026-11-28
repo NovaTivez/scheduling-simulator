@@ -385,7 +385,7 @@ public class CLook extends JFrame {
             upBtn.setSelected(true);
             clearResults();
         });
-        JButton close = new JButton(hasMenu ? "Back to Menu" : "Close");
+        
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btns.add(clear);
         btns.add(sample);
