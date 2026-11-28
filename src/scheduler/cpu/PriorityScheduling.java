@@ -64,9 +64,8 @@ public class PriorityScheduling extends JPanel {
             }
         });
         JButton sample = new JButton("Load Sample Data");
-        sample.addActionListener(event -> setRows(new Object[][] {
-            {1, 2, 5, 3}, {2, 4, 3, 1}, {3, 4, 2, 1}, {4, 5, 1, 1}, {5, 14, 2, 2}
-        }));
+        sample.setToolTipText("Group demonstration dataset: 10 processes (not a facilitator problem set)");
+        sample.addActionListener(event -> setRows(samples.DemoData.cpu(true)));
         JButton clear = new JButton("Clear");
         clear.addActionListener(event -> setRows(new Object[1][4]));
         JButton run = new JButton("Run Simulation");

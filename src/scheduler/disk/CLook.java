@@ -377,9 +377,7 @@ public class CLook extends JFrame {
         JButton run = new JButton("Run");
         JButton clear = new JButton("Clear");
         JButton sample = new JButton("Load Sample Data");
-
         sample.setToolTipText("Group demonstration dataset: 20 requests (not a facilitator problem set)");
-
         sample.addActionListener(e -> {
             diskSizeField.setText(String.valueOf(samples.DemoData.DISK_SIZE));
             headField.setText(String.valueOf(samples.DemoData.HEAD));
@@ -387,7 +385,7 @@ public class CLook extends JFrame {
             upBtn.setSelected(true);
             clearResults();
         });
-
+        
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btns.add(clear);
         btns.add(sample);
@@ -543,13 +541,12 @@ public class CLook extends JFrame {
         pathPanel.setResult(r, diskSize);
     }
 
-public static void main(String[] args) {
-    try {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (ClassNotFoundException | InstantiationException |
-            IllegalAccessException | UnsupportedLookAndFeelException ignored) {
-    }
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {
+        }
 
-    SwingUtilities.invokeLater(() -> new CLook().setVisible(true));
-}
+        SwingUtilities.invokeLater(() -> new CLook().setVisible(true));
+    }
 }
