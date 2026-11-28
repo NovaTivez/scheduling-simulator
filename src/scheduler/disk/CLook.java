@@ -377,9 +377,7 @@ public class CLook extends JFrame {
         JButton run = new JButton("Run");
         JButton clear = new JButton("Clear");
         JButton sample = new JButton("Load Sample Data");
-
         sample.setToolTipText("Group demonstration dataset: 20 requests (not a facilitator problem set)");
-
         sample.addActionListener(e -> {
             diskSizeField.setText(String.valueOf(samples.DemoData.DISK_SIZE));
             headField.setText(String.valueOf(samples.DemoData.HEAD));
@@ -387,7 +385,7 @@ public class CLook extends JFrame {
             upBtn.setSelected(true);
             clearResults();
         });
-
+        JButton close = new JButton(hasMenu ? "Back to Menu" : "Close");
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btns.add(clear);
         btns.add(sample);
