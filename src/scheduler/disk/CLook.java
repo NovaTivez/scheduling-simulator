@@ -543,12 +543,13 @@ public class CLook extends JFrame {
         pathPanel.setResult(r, diskSize);
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
-        }
-
-        SwingUtilities.invokeLater(() -> new CLook().setVisible(true));
+public static void main(String[] args) {
+    try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (ClassNotFoundException | InstantiationException |
+            IllegalAccessException | UnsupportedLookAndFeelException ignored) {
     }
+
+    SwingUtilities.invokeLater(() -> new CLook().setVisible(true));
+}
 }
