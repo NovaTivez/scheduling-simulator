@@ -2,7 +2,6 @@ package scheduler.disk;
 
 // C-LOOK Algorithm
 // Aileen Shein V. Banzuela - Group 7
-
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,7 +13,9 @@ import javax.swing.table.DefaultTableModel;
 
 interface DiskScheduler {
 
-    enum Direction { UP, DOWN }
+    enum Direction {
+        UP, DOWN
+    }
 
     String getName();
 
@@ -23,9 +24,12 @@ interface DiskScheduler {
 
 // Stores the seek sequence and head movements
 class DiskResult {
+
     public static class Step {
+
         public final int from, to, distance;
         public final boolean jump;
+
         Step(int from, int to, boolean jump) {
             this.from = from;
             this.to = to;
@@ -53,13 +57,13 @@ class DiskResult {
     }
 
     public int getStartHead() {
-
         return startHead;
-
     }
+
     public List<Step> getSteps() {
         return steps;
     }
+
     public int getTotalMovement() {
         return total;
     }
@@ -70,13 +74,19 @@ class DiskResult {
     }
 
     public boolean hasJump() {
-        for (Step s : steps) if (s.jump) return true;
+        for (Step s : steps) {
+            if (s.jump) {
+                return true;
+            }
+        }
         return false;
     }
 
     public List<Integer> getSeekSequence() {
         List<Integer> seq = new ArrayList<>();
-        for (Step s : steps) seq.add(s.to);
+        for (Step s : steps) {
+            seq.add(s.to);
+        }
         return seq;
     }
 
@@ -109,31 +119,44 @@ class CLookScheduler implements DiskScheduler {
         if (dir == Direction.UP) {
             // Move from lower to higher cylinders
             for (int v : sorted) {
-                if (v >= head) first.add(v); else second.add(v);
+                if (v >= head) {
+                    first.add(v);
+                } else {
+                    second.add(v);
+                }
             }
         } else {
             // Move from higher to lower cylinders
             for (int i = sorted.length - 1; i >= 0; i--) {
                 int v = sorted[i];
-                if (v <= head) first.add(v); else second.add(v);
+                if (v <= head) {
+                    first.add(v);
+                } else {
+                    second.add(v);
+                }
             }
         }
 
         DiskResult result = new DiskResult(head);
+
         // Serve requests in the chosen direction first
-        for (int v : first) result.addStep(v, false);
+        for (int v : first) {
+            result.addStep(v, false);
+        }
 
         // Jump to the first remaining request, then continue
         boolean jump = true;
         for (int v : second) {
             result.addStep(v, jump);
-            jump = false; 
+            jump = false;
         }
+
         return result;
     }
 }
 
 class PathPanel extends JPanel {
+
     private static final int LEFT = 40, RIGHT = 40, TOP = 55, ROW = 30, BOTTOM = 25;
     private static final Color SEEK = new Color(0x1F6FEB);
     private static final Color JUMP = new Color(0xD1242F);
@@ -166,6 +189,7 @@ class PathPanel extends JPanel {
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
         Graphics2D g = (Graphics2D) g0.create();
+
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
@@ -181,7 +205,10 @@ class PathPanel extends JPanel {
 
         g.setColor(Color.DARK_GRAY);
         g.drawLine(LEFT, 30, LEFT + plotW, 30);
-        String zero = "0", last = String.valueOf(diskSize - 1);
+
+        String zero = "0";
+        String last = String.valueOf(diskSize - 1);
+
         g.drawLine(LEFT, 26, LEFT, 34);
         g.drawLine(LEFT + plotW, 26, LEFT + plotW, 34);
         g.drawString(zero, LEFT - fm.stringWidth(zero) / 2, 20);
@@ -191,39 +218,55 @@ class PathPanel extends JPanel {
         List<DiskResult.Step> steps = result.getSteps();
 
         Stroke solid = new BasicStroke(2f);
-        Stroke dashed = new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                10f, new float[]{6f, 4f}, 0f);
+        Stroke dashed = new BasicStroke(2f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10f, new float[]{6f, 4f}, 0f);
+
         for (int i = 0; i < steps.size(); i++) {
             DiskResult.Step s = steps.get(i);
-            int x1 = xOf(path.get(i), plotW), y1 = TOP + i * ROW;
-            int x2 = xOf(path.get(i + 1), plotW), y2 = TOP + (i + 1) * ROW;
+
+            int x1 = xOf(path.get(i), plotW);
+            int y1 = TOP + i * ROW;
+            int x2 = xOf(path.get(i + 1), plotW);
+            int y2 = TOP + (i + 1) * ROW;
+
             g.setStroke(s.jump ? dashed : solid);
             g.setColor(s.jump ? JUMP : SEEK);
             g.drawLine(x1, y1, x2, y2);
         }
 
         g.setStroke(new BasicStroke(1f));
+
         for (int i = 0; i < path.size(); i++) {
-            int x = xOf(path.get(i), plotW), y = TOP + i * ROW;
+            int x = xOf(path.get(i), plotW);
+            int y = TOP + i * ROW;
+
             g.setColor(i == 0 ? new Color(0x1A7F37) : Color.BLACK);
             g.fillOval(x - 4, y - 4, 8, 8);
+
             String label = path.get(i) + (i == 0 ? " (start)" : "");
             int lx = x + 8;
-            if (lx + fm.stringWidth(label) > getWidth() - 4) lx = x - 8 - fm.stringWidth(label);
+
+            if (lx + fm.stringWidth(label) > getWidth() - 4) {
+                lx = x - 8 - fm.stringWidth(label);
+            }
+
             g.drawString(label, lx, y + 4);
         }
 
         int ly = TOP + ROW * path.size() - 8;
+
         g.setColor(SEEK);
         g.setStroke(solid);
         g.drawLine(LEFT, ly, LEFT + 24, ly);
         g.setColor(Color.DARK_GRAY);
         g.drawString("Seek", LEFT + 30, ly + 4);
+
         g.setColor(JUMP);
         g.setStroke(dashed);
         g.drawLine(LEFT + 80, ly, LEFT + 104, ly);
         g.setColor(Color.DARK_GRAY);
         g.drawString("Return jump", LEFT + 110, ly + 4);
+
         g.dispose();
     }
 }
@@ -244,6 +287,7 @@ public class CLook extends JFrame {
             return false;
         }
     };
+
     private final JTextField sequenceField = new JTextField();
     private final JLabel totalLabel = new JLabel("Total head movement: -");
     private final JLabel avgLabel = new JLabel("Average seek distance: -");
@@ -256,6 +300,7 @@ public class CLook extends JFrame {
     public CLook(Runnable onReturn) {
         super("C-LOOK Disk Scheduling");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
         if (onReturn != null) {
             addWindowListener(new WindowAdapter() {
                 @Override
@@ -264,10 +309,11 @@ public class CLook extends JFrame {
                 }
             });
         }
+
         setLayout(new BorderLayout(8, 8));
         ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        add(buildInputPanel(onReturn != null), BorderLayout.NORTH);
+        add(buildInputPanel(), BorderLayout.NORTH);
         add(buildResultPanel(), BorderLayout.CENTER);
 
         setMinimumSize(new Dimension(820, 520));
@@ -276,9 +322,10 @@ public class CLook extends JFrame {
     }
 
     // Input fields and buttons
-    private JPanel buildInputPanel(boolean hasMenu) {
+    private JPanel buildInputPanel() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(BorderFactory.createTitledBorder("Input"));
+
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(4, 6, 4, 6);
         c.anchor = GridBagConstraints.WEST;
@@ -286,21 +333,26 @@ public class CLook extends JFrame {
         c.gridx = 0;
         c.gridy = 0;
         p.add(new JLabel("Disk size (cylinders):"), c);
+
         c.gridx = 1;
         p.add(diskSizeField, c);
+
         c.gridx = 2;
         p.add(new JLabel("Initial head position:"), c);
+
         c.gridx = 3;
         p.add(headField, c);
 
         c.gridx = 0;
         c.gridy = 1;
         p.add(new JLabel("Requests (comma/space separated):"), c);
+
         c.gridx = 1;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
         p.add(requestsField, c);
+
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.weightx = 0;
@@ -308,12 +360,15 @@ public class CLook extends JFrame {
         ButtonGroup bg = new ButtonGroup();
         bg.add(upBtn);
         bg.add(downBtn);
+
         JPanel dirPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         dirPanel.add(upBtn);
         dirPanel.add(downBtn);
+
         c.gridx = 0;
         c.gridy = 2;
         p.add(new JLabel("Initial direction:"), c);
+
         c.gridx = 1;
         c.gridwidth = 3;
         p.add(dirPanel, c);
@@ -332,10 +387,10 @@ public class CLook extends JFrame {
         });
         JButton close = new JButton(hasMenu ? "Back to Menu" : "Close");
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        btns.add(close);
         btns.add(clear);
         btns.add(sample);
         btns.add(run);
+
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 4;
@@ -344,7 +399,7 @@ public class CLook extends JFrame {
 
         run.addActionListener(e -> onRun());
         clear.addActionListener(e -> onClear());
-        close.addActionListener(e -> dispose());
+
         getRootPane().setDefaultButton(run);
         return p;
     }
@@ -356,6 +411,7 @@ public class CLook extends JFrame {
         table.setRowHeight(22);
 
         sequenceField.setEditable(false);
+
         JPanel seqPanel = new JPanel(new BorderLayout(6, 0));
         seqPanel.add(new JLabel("Seek sequence:"), BorderLayout.WEST);
         seqPanel.add(sequenceField, BorderLayout.CENTER);
@@ -378,6 +434,7 @@ public class CLook extends JFrame {
 
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, graph);
         split.setResizeWeight(0.42);
+
         return split;
     }
 
@@ -406,19 +463,34 @@ public class CLook extends JFrame {
             int head = parseInt(headField.getText(), "Initial head position", 0, diskSize - 1);
 
             String text = requestsField.getText().trim();
-            if (text.isEmpty()) throw new IllegalArgumentException("Enter at least one request.");
+
+            if (text.isEmpty()) {
+                throw new IllegalArgumentException("Enter at least one request.");
+            }
+
             String[] parts = text.split("[,\\s]+");
-            if (parts.length == 0) throw new IllegalArgumentException("Enter at least one request.");
-            if (parts.length > 1000) throw new IllegalArgumentException("At most 1000 requests allowed.");
+
+            if (parts.length == 0) {
+                throw new IllegalArgumentException("Enter at least one request.");
+            }
+
+            if (parts.length > 1000) {
+                throw new IllegalArgumentException("At most 1000 requests allowed.");
+            }
+
             int[] requests = new int[parts.length];
+
             for (int i = 0; i < parts.length; i++) {
                 requests[i] = parseInt(parts[i], "Request " + (i + 1), 0, diskSize - 1);
             }
 
             DiskScheduler.Direction dir = upBtn.isSelected()
-                    ? DiskScheduler.Direction.UP : DiskScheduler.Direction.DOWN;
+                    ? DiskScheduler.Direction.UP
+                    : DiskScheduler.Direction.DOWN;
+
             DiskResult r = new CLookScheduler().schedule(requests, head, diskSize, dir);
             showResult(r, requests.length, diskSize);
+
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Invalid input",
                     JOptionPane.ERROR_MESSAGE);
@@ -427,39 +499,54 @@ public class CLook extends JFrame {
 
     private static int parseInt(String s, String name, int min, int max) {
         String t = s.trim();
-        if (t.isEmpty()) throw new IllegalArgumentException(name + " is required.");
+
+        if (t.isEmpty()) {
+            throw new IllegalArgumentException(name + " is required.");
+        }
+
         int v;
+
         try {
             v = Integer.parseInt(t);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(name + ": \"" + t + "\" is not a whole number.");
         }
+
         if (v < min || v > max) {
             throw new IllegalArgumentException(name + " must be between " + min + " and " + max + ".");
         }
+
         return v;
     }
 
-    // Display 
+    // Display
     private void showResult(DiskResult r, int n, int diskSize) {
         tableModel.setRowCount(0);
         int i = 1;
+
         for (DiskResult.Step s : r.getSteps()) {
-            tableModel.addRow(new Object[]{i++, s.from, s.to, s.distance,
-                    s.jump ? "Return jump" : "Seek"});
+            tableModel.addRow(new Object[]{
+                i++, s.from, s.to, s.distance, s.jump ? "Return jump" : "Seek"
+            });
         }
+
         sequenceField.setText(r.getSeekSequence().toString());
+
         totalLabel.setText("Total head movement: " + r.getTotalMovement() + " cylinders"
                 + (r.hasJump() ? " (includes return jump)" : ""));
+
         avgLabel.setText(String.format("Average seek distance: %.2f (%d / %d requests)",
                 r.getAverageSeek(), r.getTotalMovement(), n));
+
         pathPanel.setResult(r, diskSize);
     }
 
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
+
         SwingUtilities.invokeLater(() -> new CLook().setVisible(true));
     }
 }
