@@ -529,9 +529,8 @@ public class CLook extends JFrame {
                 i++, s.from, s.to, s.distance, s.jump ? "Return jump" : "Seek"
             });
         }
-
-        sequenceField.setText(r.getSeekSequence().toString());
-
+        sequenceField.setText(r.getPath().toString());
+        
         totalLabel.setText("Total head movement: " + r.getTotalMovement() + " cylinders"
                 + (r.hasJump() ? " (includes return jump)" : ""));
 
