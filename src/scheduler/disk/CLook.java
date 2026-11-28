@@ -17,8 +17,6 @@ interface DiskScheduler {
         UP, DOWN
     }
 
-    String getName();
-
     DiskResult schedule(int[] requests, int head, int diskSize, Direction dir);
 }
 
@@ -99,12 +97,6 @@ class DiskResult {
 }
 
 class CLookScheduler implements DiskScheduler {
-
-    @Override
-    public String getName() {
-        return "C-LOOK";
-    }
-
     @Override
     public DiskResult schedule(int[] requests, int head, int diskSize, Direction dir) {
         // Sort the requests without changing the original array
